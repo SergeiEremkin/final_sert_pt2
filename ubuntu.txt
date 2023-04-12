@@ -1,0 +1,76 @@
+su -root
+cd /home/vboxuser/Public
+
+1.
+cat > pets
+dogs
+cats
+hamster
+CTRL+D
+
+cat > pack_animals
+horses
+camels
+donkeys
+CTRL+D
+
+cat pets pack_animals > human_friends
+cat human_friends
+--> отображаются
+dogs
+cats
+hamster
+horses
+camels
+donkeys
+
+2.
+mkdir friends
+mv human_friends friends
+
+3.
+sudo apt install mysql-server
+sudo apt install mysql-client
+
+4.
+cd /home/vboxuser/Downloads
+скачал deb-файл с https://vivaldi.com/ru/download/archive/?platform=linux
+dpkg -i vivaldi-stable_5.7.2921.65-1_amd64.deb
+dpkg --list 'vivaldi*'
+dpkg -r vivaldi-stable 5.7.2921.65-1 amd64
+dpkg -P vivaldi-stable 5.7.2921.65-1 amd64
+
+7.
+mysql -u root
+CREATE database human_friends;
+USE human_friends;
+
+8.
+CREATE TABLE animals (Id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(20), command VARCHAR(20), type_id INT NOT NULL);
+CREATE TABLE category (Id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(20));
+CREATE TABLE type (Id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(20), cat_id INT NOT NULL);
+ALTER TABLE type ADD FOREIGN KEY (cat_id) REFERENCES category(id);
+ALTER TABLE animals ADD FOREIGN KEY (type_id) REFERENCES type(id);
+ALTER TABLE animals ADD COLUMN birthdate DATE AFTER command;
+
+9.
+INSERT INTO category(name) VALUES ('pets'), ('pack_animals');
+INSERT INTO type(name, cat_id) VALUES ('dog', 1),('cat', 1),('hamster', 1),('horse', 2),('camel', 2),('donkey', 2);
+INSERT INTO animals(name, command, type_id) VALUES ('Bill', 'run', 1),('Murka','eat', 2),('Venya', 'sleep', 3),('Flash', 'rest', 4),('Sahara','drink', 5),('Sunny', 'drink', 5);
+UPDATE animals SET birthdate='2020-01-01'  WHERE name='Bill';
+UPDATE animals SET birthdate='2015-02-02' WHERE name='Murka';
+UPDATE animals SET birthdate='2021-03-01' WHERE name='Venya';
+UPDATE animals SET birthdate='2010-10-11' WHERE name='Flash';
+UPDATE animals SET birthdate='2020-12-12' WHERE name='Sahara';
+UPDATE animals SET birthdate='2019-04-05' WHERE name='Sunny';
+
+10.
+DELETE FROM animals WHERE type_id=5;
+
+11.
+CREATE TABLE young_animals SELECT a.id, a.name, a.command, a.birthdate, YEAR(CURDATE())-YEAR(birthdate) AS age FROM animals a WHERE YEAR(CURDATE())-YEAR(birthdate) BETWEEN 1 and 3;
+
+12.
+CREATE TABLE summary SELECT a.id, a.name, a.command, a.birthdate, t.name AS 'animals_type', c.name AS 'animals_category' FROM animals AS a JOIN type AS t ON a.type_id=t.id LEFT
+JOIN category AS c ON t.cat_id=c.id ;
+
