@@ -62,3 +62,14 @@ class Donkey(Horse):
         return super().__str__()
 
 
+class IncrementCounter:
+
+    def __init__(self):
+        self.value = 0
+
+    def new_value(self):
+        self.value += 1
+        return self.value
+
+    def __str__(self):
+        return f'{self.value}'
